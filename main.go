@@ -2,6 +2,7 @@ package main
 
 import (
 	"basesort/methods"
+	"basesort/methods/tree"
 	"basesort/utils"
 	"basesort/utils/log"
 	_ "github.com/go-sql-driver/mysql"
@@ -9,13 +10,15 @@ import (
 )
 
 func main() {
-	logger := log.ConsoleLog{}
-	logger.Init()
+	logger := log.FileLog{}
+	logger.Init("log.csv")
+	defer logger.Close()
+	defer logger.Output()
 	m := utils.SortManager{
-		Length: 10000,
+		Length: 100000,
 		Seed:   0,
-		Times: 1,
-		Log: &logger,
+		Times:  3,
+		Log:    &logger,
 		Sorts: []methods.Sorter{
 			&methods.InsertionSort{},
 			&methods.SelectionSort{},
@@ -24,9 +27,10 @@ func main() {
 			&methods.QuickSort{},
 			&methods.MergeSort{},
 			&methods.HeapSort{},
+			&tree.BalanceBinary{},
 		},
 	}
-	for i := 0; i < m.Times; i ++ {
+	for i := 0; i < m.Times; i++ {
 		m.Start()
 		m.Seed = time.Now().UnixNano()
 	}

@@ -9,17 +9,15 @@ import (
 	"time"
 )
 
-
-
 type SortManager struct {
-	Sorts []methods.Sorter
+	Sorts  []methods.Sorter
 	Length int
-	Seed int64
-	Times int
-	Log log.Logger
+	Seed   int64
+	Times  int
+	Log    log.Logger
 }
 
-func (m *SortManager) Start(){
+func (m *SortManager) Start() {
 	data := NewArray(m.Length)
 	if m.Seed == 0 {
 		Shuffle(data)
@@ -35,13 +33,14 @@ func (m *SortManager) Start(){
 		elapsedTime := time.Since(startTime)
 		result := s.CheckResult()
 		name := fmt.Sprintf("%s", reflect.TypeOf(s))
+		index := strings.IndexByte(name, '.')
 		m.Log.Add(log.SortLog{
-			Name: strings.TrimLeft(name, "*methods."),
-			Seed: m.Seed,
-			Length: m.Length,
-			Start: startTime,
+			Name:      name[index+1:],
+			Seed:      m.Seed,
+			Length:    m.Length,
+			Start:     startTime,
 			TimeCount: elapsedTime,
-			Result: result,
+			Result:    result,
 		})
 	}
 }
